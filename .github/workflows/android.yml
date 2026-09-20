@@ -1,0 +1,33 @@
+name: Build NightLoad APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Baixar projeto
+        uses: actions/checkout@v4
+
+      - name: Preparar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar ferramentas
+        run: |
+          python -m pip install --upgrade pip
+          pip install buildozer cython==0.29.36
+
+      - name: Compilar APK
+        run: buildozer android debug
+
+      - name: Guardar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: NightLoad-debug
+          path: bin/*.apk
